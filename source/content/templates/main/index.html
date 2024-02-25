@@ -1,17 +1,49 @@
 {% extends 'layouts/default/page.html' %}
+{%load static%}
+
 
 {% load i18n %}
 
+
 {% block content %}
+    <h1>WELCOME TO THE HOUSE BRAIN</h1>
+
 
     {% if request.user.is_authenticated %}
 
         {% trans 'Your username is' %} <b>{{ request.user.username }}</b>.
 
+        <nav class="navbar navbar-expand-md navbar-dark bg-secondary static-top">
+
+            <a class="navbar-brand" href="{% url 'index' %}">{% trans 'Address' %}</a>
+       
+           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault">
+               <span class="navbar-toggler-icon"></span>
+           </button> 
+           <li class="nav-item">
+            <a class="nav-link" href="{% url 'get_address' %}">{% trans 'Address' %}</a>
+        </li>
+    
+       
+       </nav>
+   
+   
+       <body> 
+          
+           <h3> AIR FILTER </h3>
+           <P> Replace every 1-3 months</P>
+           <h3> WATER FILTER</h3>
+           <p> Replace every 6 months</p>
+       </body>
+   
+
     {% else %}
 
-        {% trans 'You are a guest.' %}
+        {% trans 'Please Log In or Create an Account to continue' %}
 
     {% endif %}
+
+
+
 
 {% endblock %}

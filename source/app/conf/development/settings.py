@@ -4,14 +4,16 @@ from os.path import dirname, abspath, join
 from django.utils.translation import gettext_lazy as _
 
 warnings.simplefilter('error', DeprecationWarning)
-
+###  Need to figure out what these are for   ###
 BASE_DIR = dirname(dirname(dirname(dirname(abspath(__file__)))))
 CONTENT_DIR = join(BASE_DIR, 'content')
 
 SECRET_KEY = 'NhfTvayqggTBPswCXXhWaN69HuglgZIkM'
 
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost',
+                 '127.0.0.1']
+# ALLOWED_HOSTS = []
 
 SITE_ID = 1
 
@@ -65,15 +67,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
-EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_FILE_PATH = join(CONTENT_DIR, 'tmp/emails')
-EMAIL_HOST_USER = 'test@example.com'
-DEFAULT_FROM_EMAIL = 'test@example.com'
+EMAIL_HOST = "email-smtp.ue-east-1.amazonaws.com"
+EMAIL_HOST_USER = 'AKIA3FLD43BIUM4KBTIR'
+DEFAULT_FROM_EMAIL = 'thehousebrain@thehousebrain.awsapps.com'
+#This below is new? possibly wrong?
+EMAIL_HOST_PASSWORD = 'BKj4AF35xmMnPjTk3YCv4ED9ojn2MXp90xAPOXRQRBV7' 
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+#
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'TheHouseBrain',
+        'USER': 'thehousebrain',
+        'PASSWORD': 'Brookie69$',
+        'HOST': 'thehousebrain.cdowsmm0qtq5.us-east-1.rds.amazonaws.com',
+        'PORT': '3306',
     }
 }
 

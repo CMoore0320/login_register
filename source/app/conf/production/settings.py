@@ -9,7 +9,7 @@ SECRET_KEY = '3d305kajG5Jy8KBafCMpHwDIsNi0SqVaW'
 
 DEBUG = False
 ALLOWED_HOSTS = [
-    'example.com',
+    'thehousebrain.awsapps.com',
 ]
 
 SITE_ID = 1
@@ -65,18 +65,22 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-DEFAULT_FROM_EMAIL = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.thehousebrain.awsapps.com'
+EMAIL_HOST_USER = 'thehousebrain@thehousebrain.awsapps.com'
+DEFAULT_FROM_EMAIL = 'thehousebrain@thehousebrain.awsapps.com'
+EMAIL_HOST_PASSWORD = 'VFRVFRvgyvgy123'
+EMAIL_PORT = 25
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'TheHouseBrain',
+        'USER': 'thehousebrain',
+        'PASSWORD': 'Brookie69$',
+        'HOST': 'thehousebrain.cdowsmm0qtq5.us-east-1.rds.amazonaws.com',
+        'PORT': '3306',
     }
 }
 

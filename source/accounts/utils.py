@@ -3,15 +3,21 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 
 
 def send_mail(to, template, context):
-    html_content = render_to_string(f'accounts/emails/{template}.html', context)
-    text_content = render_to_string(f'accounts/emails/{template}.txt', context)
+    try:
+        html_content = render_to_string(f'accounts/emails/{template}.html', context)
+        text_content = render_to_string(f'accounts/emails/{template}.txt', context)
 
-    msg = EmailMultiAlternatives(context['subject'], text_content, settings.DEFAULT_FROM_EMAIL, [to])
-    msg.attach_alternative(html_content, 'text/html')
-    msg.send()
+        msg = EmailMultiAlternatives(context['subject'], text_content, settings.DEFAULT_FROM_EMAIL, [to])
+        msg.attach_alternative(html_content, 'text/html')
+        msg.send()
+    except ValidationError as e:
+        print(f"Validation Error: {e}")
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 
 def send_activation_email(request, email, code):

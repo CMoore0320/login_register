@@ -7,3 +7,4 @@ class IndexPageView(TemplateView):
 
 class ChangeLanguageView(TemplateView):
     template_name = 'main/change_language.html'
+

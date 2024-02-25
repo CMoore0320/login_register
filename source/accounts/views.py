@@ -7,7 +7,7 @@ from django.contrib.auth.views import (
     PasswordResetDoneView as BasePasswordResetDoneView, PasswordResetConfirmView as BasePasswordResetConfirmView,
 )
 from django.views.generic.base import TemplateView
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect,render
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme as is_safe_url
@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View, FormView
 from django.conf import settings
+from .forms import AddressForm
 
 from .utils import (
     send_activation_email, send_reset_password_email, send_forgotten_username_email, send_activation_change_email,
@@ -29,6 +30,7 @@ from .forms import (
     ResendActivationCodeForm, ResendActivationCodeViaEmailForm, ChangeProfileForm, ChangeEmailForm,
 )
 from .models import Activation
+from .models import Address
 
 
 class GuestOnlyView(View):
@@ -334,3 +336,18 @@ class LogOutConfirmView(LoginRequiredMixin, TemplateView):
 
 class LogOutView(LoginRequiredMixin, BaseLogoutView):
     template_name = 'accounts/log_out.html'
+
+class AddressForm(LoginRequiredMixin, FormView):
+    template_name = 'accounts/address_form.html'
+    form_class = AddressForm
+
+    def form_valid(self, form):
+        address = form.cleaned_data['address']
+        user = self.request.user
+
+        new_address = Address(user=user, address=address)
+        new_address.save()
+
+        return render(self.request, 'accounts/address_success.html', {'address':address})
+
+
