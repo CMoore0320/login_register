@@ -1,6 +1,7 @@
 from os.path import dirname, abspath, join
 
 from django.utils.translation import gettext_lazy as _
+from ..config import DATABASES, EMAIL_HOST_PASSWORD, EMAIL_HOST_USER
 
 BASE_DIR = dirname(dirname(dirname(dirname(abspath(__file__)))))
 CONTENT_DIR = join(BASE_DIR, 'content')
@@ -66,23 +67,14 @@ WSGI_APPLICATION = 'app.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.thehousebrain.awsapps.com'
-EMAIL_HOST_USER = 'thehousebrain@thehousebrain.awsapps.com'
+
 DEFAULT_FROM_EMAIL = 'thehousebrain@thehousebrain.awsapps.com'
-EMAIL_HOST_PASSWORD = 'VFRVFRvgyvgy123'
+
 EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'TheHouseBrain',
-        'USER': 'thehousebrain',
-        'PASSWORD': 'Brookie69$',
-        'HOST': 'thehousebrain.cdowsmm0qtq5.us-east-1.rds.amazonaws.com',
-        'PORT': '3306',
-    }
-}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -1,5 +1,6 @@
 import warnings
 from os.path import dirname, abspath, join
+from ..config import DATABASES, EMAIL_HOST_PASSWORD, EMAIL_HOST_USER
 
 from django.utils.translation import gettext_lazy as _
 
@@ -70,30 +71,14 @@ WSGI_APPLICATION = 'app.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_FILE_PATH = join(CONTENT_DIR, 'tmp/emails')
 EMAIL_HOST = "email-smtp.ue-east-1.amazonaws.com"
-EMAIL_HOST_USER = 'AKIA3FLD43BIUM4KBTIR'
+
 DEFAULT_FROM_EMAIL = 'thehousebrain@thehousebrain.awsapps.com'
 #This below is new? possibly wrong?
-EMAIL_HOST_PASSWORD = 'BKj4AF35xmMnPjTk3YCv4ED9ojn2MXp90xAPOXRQRBV7' 
+
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 #
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'TheHouseBrain',
-        'USER': 'thehousebrain',
-        'PASSWORD': 'Brookie69$',
-        'HOST': 'thehousebrain.cdowsmm0qtq5.us-east-1.rds.amazonaws.com',
-        'PORT': '3306',
-    }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

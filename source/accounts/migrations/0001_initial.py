@@ -38,23 +38,23 @@ class Migration(migrations.Migration):
                 ),
             ],
 
-            name="Address",
-            fields=[
+            # name="Address",
+            # fields=[
 
                 
-                ("address", 
-                 models.CharField(max_length=150,
-                                primary_key =True,
-                                unique=False)),
+            #     ("address", 
+            #      models.CharField(max_length=150,
+            #                     primary_key =True,
+            #                     unique=False)),
                 
-                (
-                    "user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        primary_key = True,
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-            ],
+            #     (
+            #         "user",
+            #         models.ForeignKey(
+            #             on_delete=django.db.models.deletion.CASCADE,
+            #             primary_key = True,
+            #             to=settings.AUTH_USER_MODEL,
+            #         ),
+            #     ),
+            # ],
         ),
     ]

@@ -15,14 +15,12 @@
 
         <nav class="navbar navbar-expand-md navbar-dark bg-secondary static-top">
 
-            <a class="navbar-brand" href="{% url 'index' %}">{% trans 'Address' %}</a>
+            <a class="navbar-brand" href="{% url 'accounts:get_address' %}">{% trans 'Address' %}</a>
        
            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault">
                <span class="navbar-toggler-icon"></span>
            </button> 
-           <li class="nav-item">
-            <a class="nav-link" href="{% url 'get_address' %}">{% trans 'Address' %}</a>
-        </li>
+
     
        
        </nav>

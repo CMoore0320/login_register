@@ -9,3 +9,5 @@ env/
 tmp/
 
 db.sqlite3
+
+config.py
