@@ -1,9 +1,11 @@
 from django.urls import path
 
+
 from .views import (
     LogInView, ResendActivationCodeView, RemindUsernameView, SignUpView, ActivateView, LogOutView,
     ChangeEmailView, ChangeEmailActivateView, ChangeProfileView, ChangePasswordView,
-    RestorePasswordView, RestorePasswordDoneView, RestorePasswordConfirmView, LogOutConfirmView,AddressForm, 
+    RestorePasswordView, RestorePasswordDoneView, RestorePasswordConfirmView, LogOutConfirmView,address_form, AddEquipment, 
+    maintenance,equipment, get_components, receipts, index
 )
 
 app_name = 'accounts'
@@ -28,5 +30,12 @@ urlpatterns = [
     path('change/password/', ChangePasswordView.as_view(), name='change_password'),
     path('change/email/', ChangeEmailView.as_view(), name='change_email'),
     path('change/email/<code>/', ChangeEmailActivateView.as_view(), name='change_email_activation'),
-    path('get/address/',AddressForm.as_view(),name="get_address"),
+    path('address/form/', address_form, name='address_form'),
+    path('add/equipment/', AddEquipment, name= 'add_equipment'),
+    path('receipts/', receipts, name='receipts'),
+    path('maintenance/', maintenance, name = 'maintenance'),
+    path('equipment/', equipment, name = 'equipment'),
+    path('get-components/', get_components, name='get_components'),
+    path('', index, name= 'index'),
+    
 ]

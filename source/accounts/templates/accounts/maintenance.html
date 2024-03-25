@@ -1,0 +1,43 @@
+{% extends 'layouts/default/page.html' %}
+{% load bootstrap4 %}
+
+
+{% block content %}
+
+<div class="container mx-auto mt-3 mb-3">
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title text-center">Maintenance</h1>
+      </div>
+      <div class="card-body">
+        <form method="post" action="{% url 'accounts:maintenance' %}" enctype="multipart/form-data" class="row justify-content-center">
+          {% csrf_token %}
+          {{ form.as_p }}
+  
+          <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        </form>
+      </div>
+    </div>
+  
+    {% if messages %}
+      <ul class="messages mt-3">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+
+  {% endblock %}
+
+
+
+
+       <!-- <label for="id_component">Component:</label>
+        {{ form.component }} <br> -->
+        <!-- #   this works but not showing the individual users components.  -->
+
+<!-- 
+        <label for="id_dateCompleted">Date Completed:</label>
+        {{ form.dateCompleted }} <br>
+   -->

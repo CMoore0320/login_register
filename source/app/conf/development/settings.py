@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # Application apps
     'main',
     'accounts',
+    # 'address_form'
 ]
 
 MIDDLEWARE = [
@@ -71,10 +72,10 @@ WSGI_APPLICATION = 'app.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_FILE_PATH = join(CONTENT_DIR, 'tmp/emails')
 EMAIL_HOST = "email-smtp.ue-east-1.amazonaws.com"
+EMAIL_HOST_USER = 'AKIA3FLD43BIUM4KBTIR'
 
+EMAIL_HOST_PASSWORD = 'BKj4AF35xmMnPjTk3YCv4ED9ojn2MXp90xAPOXRQRBV7' 
 DEFAULT_FROM_EMAIL = 'thehousebrain@thehousebrain.awsapps.com'
-#This below is new? possibly wrong?
-
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 #
@@ -106,9 +107,9 @@ USE_REMEMBER_ME = True
 RESTORE_PASSWORD_VIA_EMAIL_OR_USERNAME = False
 ENABLE_ACTIVATION_AFTER_EMAIL_CHANGE = True
 
-SIGN_UP_FIELDS = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+SIGN_UP_FIELDS = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2', ]
 if DISABLE_USERNAME:
-    SIGN_UP_FIELDS = ['first_name', 'last_name', 'email', 'password1', 'password2']
+    SIGN_UP_FIELDS = ['first_name', 'last_name', 'email', 'password1', 'password2', ]
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 

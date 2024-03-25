@@ -7,7 +7,7 @@ from django.contrib.auth.views import (
     PasswordResetDoneView as BasePasswordResetDoneView, PasswordResetConfirmView as BasePasswordResetConfirmView,
 )
 from django.views.generic.base import TemplateView
-from django.shortcuts import get_object_or_404, redirect,render
+from django.shortcuts import get_object_or_404, redirect,render, HttpResponse
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme as is_safe_url
@@ -19,6 +19,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View, FormView
 from django.conf import settings
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.core import serializers 
+from datetime import timedelta
+from django.db.models import Max
 
 
 from .utils import (
@@ -27,10 +31,11 @@ from .utils import (
 from .forms import (
     SignInViaUsernameForm, SignInViaEmailForm, SignInViaEmailOrUsernameForm, SignUpForm,
     RestorePasswordForm, RestorePasswordViaEmailOrUsernameForm, RemindUsernameForm,
-    ResendActivationCodeForm, ResendActivationCodeViaEmailForm, ChangeProfileForm, ChangeEmailForm,
+    ResendActivationCodeForm, ResendActivationCodeViaEmailForm, ChangeProfileForm, ChangeEmailForm, AddressForm,
+    EquipmentForm, MaintenanceForm, ReceiptForm,
 )
-from .models import Activation
-from .models import Address
+from .models import Activation, Address, Equipment, Maintenance, Receipt
+
 
 
 class GuestOnlyView(View):
@@ -103,7 +108,7 @@ class SignUpView(GuestOnlyView, FormView):
             user.username = form.cleaned_data['username']
 
         if settings.ENABLE_USER_ACTIVATION:
-            user.is_active = False
+            user.is_active = True
 
         # Create a user record
         user.save()
@@ -337,17 +342,115 @@ class LogOutConfirmView(LoginRequiredMixin, TemplateView):
 class LogOutView(LoginRequiredMixin, BaseLogoutView):
     template_name = 'accounts/log_out.html'
 
-class AddressForm(LoginRequiredMixin, FormView):
-    template_name = 'accounts/address_form.html'
+
+def address_form(request):
+    if request.method =='POST':
+        form=AddressForm(request.POST)
+        if form.is_valid():
+            address_instance = form.save(commit=False)
+            address_instance.user = request.user
+            address_instance.save()
+            messages.success(request, 'Address added successfully') 
+            return redirect('accounts:address_form')
+    else:
+        form=AddressForm()
+    return render(request, 'accounts/address_form.html', {'form':form})
+
+ 
+
+def AddEquipment(request):
+    addresses = Address.objects.filter(user=request.user)
+    if request.method =='POST':
+        form=EquipmentForm(request.POST)
+        if form.is_valid():
+            equipment_instance = form.save(commit=False)
+            equipment_instance.user = request.user
+            address_id = request.POST.get('address')
+            equipment_instance.address_id = address_id
+            existing_equipment = Equipment.objects.filter(
+                address_id=address_id, component=equipment_instance.component
+            ).exists()
+
+            if existing_equipment:
+                messages.error(request, 'This equipment already exists for this address.')
+            else:
+                equipment_instance.save()
+                messages.success(request, 'Equipment added successfully') 
+            return redirect('accounts:add_equipment')
+    else:
+        form=EquipmentForm()
+    return render(request, 'accounts/add_equipment.html', {'form':form, 'addresses':addresses})
+
+
+
+def receipts(request):
+    addresses = Address.objects.filter(user=request.user)
+    if request.method == 'POST':
+        form = ReceiptForm(request.POST, request.FILES)
+        if form.is_valid():
+            receipt_instance = form.save(commit=False)
+            receipt_instance.user = request.user
+            receipt_instance.save()
+            return redirect('accounts:receipts')
+    else:
+        form = ReceiptForm()
     
+    return render(request, 'accounts/receipts.html', {'form': form, 'addresses': addresses})
 
-    def form_valid(self, form):
-        address = form.cleaned_data['address']
-        user = self.request.user
 
-        new_address = Address(user=user, address=address)
-        new_address.save()
 
-        return render(self.request, 'accounts/address_success.html', {'address':address})
+def maintenance(request):
+
+    if request.method == 'POST':
+        form = MaintenanceForm(request.POST, user=request.user)  # Pass user argument
+        if form.is_valid():
+            maintenance_instance = form.save(commit=False)
+            maintenance_instance.save()
+            
+            messages.success(request, 'Maintenance record submitted successfully!')  # Success message
+            return redirect('accounts:maintenance') 
+    else:
+        form = MaintenanceForm(user=request.user)  # Pass user argument
+
+    return render(request, 'accounts/maintenance.html', {'form': form,})
+
+
+def equipment(request):
+    equipment_instances = Equipment.objects.filter(address__user=request.user)
+    equipment_list = []
+    for equipment_instance in equipment_instances:
+        address = equipment_instance.address.address
+        user = equipment_instance.address.user
+        equipment_list.append({'equipment': equipment_instance, 'address': address, 'user': user})
+    return render(request, 'accounts/equipment.html', {'equipment_list': equipment_list})
+
+
+def get_components(request):
+    user_addresses = Address.objects.filter(user=request.user)
+    components = Equipment.objects.filter(address__in=user_addresses).values('id', 'component')
+    return JsonResponse(list(components), safe=False)
+
+
+
+
+
+def index(request):
+    user_addresses = Address.objects.filter(address__user=request.user)
+    equipment = Equipment.objects.filter(address__user=request.user)
+
+    for item in equipment:
+        last_maintenance = Maintenance.objects.filter(component=item).aggregate(Max('dateCompleted'))
+        last_maintenance_date = last_maintenance['dateCompleted__max']
+
+        if last_maintenance_date:
+            next_maintenance_date = last_maintenance_date + timedelta(days=item.frequency)
+        else:
+            next_maintenance_date = None
+
+        item.next_maintenance_date = next_maintenance_date
+
+    return render(request, 'index.html', {'equipment': equipment, 'user_addresses': user_addresses})
+
+
 
 

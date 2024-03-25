@@ -1,13 +1,18 @@
 from datetime import timedelta
+from typing import Any, Mapping
 
 from django import forms
+from django.core.files.base import File
+from django.db.models.base import Model
 from django.forms import ValidationError
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.forms.utils import ErrorList
 from django.utils import timezone
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from .models import Address, Equipment, Maintenance, Receipt
 
 
 class UserCacheMixin:
@@ -122,6 +127,7 @@ class SignUpForm(UserCreationForm):
         email = self.cleaned_data['email']
 
         user = User.objects.filter(email__iexact=email).exists()
+        
         if user:
             raise ValidationError(_('You can not use this email address.'))
 
@@ -215,3 +221,35 @@ class ChangeEmailForm(forms.Form):
 
 class RemindUsernameForm(EmailForm):
     pass
+
+class AddressForm(forms.ModelForm):
+    
+    class Meta:
+        model = Address
+        fields = ['address']
+
+class EquipmentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Equipment
+        fields = ['component', 'frequency']
+
+
+class MaintenanceForm(forms.ModelForm):
+    dateCompleted = forms.DateField(widget=forms.SelectDateWidget)  # Define date field
+
+    class Meta:
+        model = Maintenance
+        fields = ['component', 'dateCompleted']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Retrieve user from kwargs
+        super(MaintenanceForm, self).__init__(*args, **kwargs)
+        
+
+
+
+class ReceiptForm(forms.ModelForm):
+    class Meta:
+        model = Receipt
+        fields = ['address', 'component', 'price', 'date', 'image']

@@ -6,32 +6,77 @@
 
 
 {% block content %}
-    <h1>WELCOME TO THE HOUSE BRAIN</h1>
+    <div style="text-align: center;">
+        <h1>WELCOME TO THE HOUSE BRAIN</h1>
+    </div>
 
 
-    {% if request.user.is_authenticated %}
+     {% if request.user.is_authenticated %}
 
-        {% trans 'Your username is' %} <b>{{ request.user.username }}</b>.
+        <!-- {% trans 'Your Username is' %} <b>{{ request.user.username }}</b>.<br/> -->
+        <!-- {% trans 'Your Address is' %} <b>{{ request.Address.user.address }}</b>.<br/>  -->
+        
+        <!-- {% if user_addresses %}
+        <h2>Your Addresses</h2>
+        <ul>
+            {% for address in user_addresses %}
+                <li>{{ address.address }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No addresses found.</p>
+    {% endif %}
 
-        <nav class="navbar navbar-expand-md navbar-dark bg-secondary static-top">
-
-            <a class="navbar-brand" href="{% url 'accounts:get_address' %}">{% trans 'Address' %}</a>
-       
-           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault">
-               <span class="navbar-toggler-icon"></span>
-           </button> 
-
-    
-       
-       </nav>
-   
+        
    
        <body> 
-          
-           <h3> AIR FILTER </h3>
-           <P> Replace every 1-3 months</P>
-           <h3> WATER FILTER</h3>
-           <p> Replace every 6 months</p>
+        <a> Will add when equipment is due here </a>
+
+        {% if equipment %}
+        <h2>Your Equipment Maintenance Schedule</h2>
+        <ul>
+            {% for item in equipment %}
+                <li>
+                    Component: {{ item.component }}
+                    {% if item.next_maintenance_date %}
+                        Next Maintenance Date: {{ item.next_maintenance_date }}
+                    {% else %}
+                        No maintenance scheduled yet.
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No equipment found.</p>
+    {% endif %} -->
+    <br>
+    <br>
+    <div id="step-container" class="container rounded-sm shadow-sm bg-light mx-auto py-1 px-1 border border-5 border-dark">
+        <div class="row">
+          <div class="col-md-8 offset-md-2">  <div class="step-wrapper active mb-3 text-center" id="step-1">
+              <h4>Enter Address</h4>
+              <p>Please enter the address for your equipment.</p>
+            </div>
+      
+            <div class="step-wrapper mb-3 text-center" id="step-2">
+              <h4>Add Components</h4>
+              <p>List the equipment components at this address.</p>
+            </div>
+      
+            <div class="step-wrapper mb-3 text-center" id="step-3">
+              <h4>Add Maintenance Completed</h4>
+              <p>Select the components that had maintenance completed and enter the date.</p>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+      
+      
+      
+
+
+      
        </body>
    
 
