@@ -3,15 +3,16 @@
 {% load bootstrap4 %}
 
 {% block content %}
-  <div class="container mx-auto bg-light">  
+  <div class="container mx-auto bg-light border border-dark bg-light">  
     
-      <div class="container mx-auto">
+      <div class="container mx-auto"; style="background-color: #aac0bf; padding: 10px;">
       <h2 style="text-align: center;">Add Receipt</h2>  <form method="post" action="{% url 'accounts:receipts' %}" enctype="multipart/form-data" class="row justify-content-center">  {% csrf_token %}
       </form>
       </div>
 
     
-
+      <br>
+      <br>
     <form method="post" action="{% url 'accounts:receipts' %}" enctype="multipart/form-data" class="row justify-content-center">  {% csrf_token %}
 
       <div class="col-md-6">  <div class="mb-3">
@@ -43,11 +44,26 @@
           <label for="image" class="form-label">Image</label>
           <input type="file" class="form-control" id="image" name="image" accept="image/*">
         </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="row justify-content-center mt-3">
+          <div class="col-auto">
+              <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+      </div>
       </div>
 
     </form>
+    {% if form.errors %}
+    <div class="errors">
+        <h2>Error:</h2>
+        <ul>
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li>{{ field|title }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
   </div>
 
 {% endblock %}

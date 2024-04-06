@@ -1,0 +1,69 @@
+{% extends 'layouts/default/page.html' %}
+{% load static %}
+
+{% block content %}
+<div style="text-align: center;">
+    <h1>WELCOME TO THE HOUSE BRAIN</h1>
+</div>
+<br>
+<br>
+<br>
+<br>
+<div style="float: left; width: 50%;">
+    <h2>Components Due for Maintenance</h2>
+    <table style="border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px;">Address</th>
+                <th style="border: 1px solid black; padding: 8px;">Component</th>
+                <th style="border: 1px solid black; padding: 8px;">Next Maintenance Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in component_next_maintenance %}
+                <tr 
+                {% if item.status == 'red' %}
+                    style="background-color: #FFCCCC"
+                {% elif item.status == 'yellow' %}
+                    style="background-color:#FFFF99"
+                {% else %}
+                    style="background-color:#FFFFFF";
+                {% endif %}; border: 1px solid black;>
+                    <td style="border: 1px solid black; padding: 8px;">{{ item.address }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ item.component }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ item.next_maintenance_date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div style="display: flex; justify-content: space-around; margin-top: 30px;">
+    <!-- Summary of Maintenance Tasks -->
+    <div style="width: 30%;">
+        <h2>Summary of Maintenance Tasks</h2>
+        <div>
+            <h3>Total Overdue Tasks</h3>
+            <p>{{ total_overdue_tasks }}</p>
+        </div>
+    </div>
+    <br>
+    <!-- Key Metrics -->
+    <div style="width: 30%;">
+        <h2>Key Metrics</h2>
+        <div>
+            <h3>Total Properties</h3>
+            <p>{{ total_properties }}</p>
+        </div>
+        <div>
+            <h3>Total Components</h3>
+            <p>{{ total_components }}</p>
+        </div>
+        <div>
+            <h3>Total Maintenance Tasks</h3>
+            <p>{{ total_maintenance_tasks }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

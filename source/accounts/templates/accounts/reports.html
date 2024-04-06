@@ -1,0 +1,67 @@
+{% extends 'layouts/default/page.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load i18n %}
+
+{% block content %}
+<body>
+    <div style="background-color: #aac0bf; padding: 10px;">
+        <form method="get" action="{% url 'accounts:reports' %}">
+            <label for="address">Address:</label>
+            <select id="address" name="address">
+                <option value="">Select Address</option>
+                {% for address in addresses %}
+                    <option value="{{ address }}">{{ address }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="component">Component:</label>
+            <select id="component" name="component">
+                <option value="">Select Component</option>
+                {% for component in components %}
+                    <option value="{{ component }}">{{ component }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" placeholder="Start Date">
+
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" placeholder="End Date">
+
+            <label for="low_price">Minimum Price:</label>
+            <input type="number" id="low_price" name="low_price" step="0.01" placeholder="Minimum Price">
+
+            <label for="high_price">Maximum Price:</label>
+            <input type="number" id="high_price" name="high_price" step="0.01" placeholder="Maximum Price">
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    {% if component_status_and_price %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Address</th>
+                    <th>Component</th>
+                    <th>Status</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for component_data in component_status_and_price %}
+                    <tr>
+                        <td>{{ component_data.component.address }}</td>
+                        <td>{{ component_data.component.component }}</td>
+                        <td>{{ component_data.status }}</td>
+                        <td>{{ component_data.total_price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No maintenance found.</p>
+    {% endif %}
+</body>
+{% endblock %}

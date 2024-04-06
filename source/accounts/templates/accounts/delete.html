@@ -1,0 +1,26 @@
+{% extends 'layouts/default/page.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Page</title>
+</head>
+<body>
+    <h2>Select what to delete:</h2>
+    <form method="post" action="{% url 'accounts:delete' %}">
+        {% csrf_token %}
+        <label for="delete_type">Select what to delete:</label>
+        <select id="delete_type" name="delete_type">
+            <option value="address">Address</option>
+            <option value="component">Component</option>
+            <option value="maintenance">Maintenance</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+{% endblock %}

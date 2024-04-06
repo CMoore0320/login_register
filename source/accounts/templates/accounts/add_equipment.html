@@ -5,24 +5,24 @@
 {% load bootstrap4 %}
 {% load i18n %}
 
+
 {% block content %}
-<div class="container mx-auto mt-3 mb-3 bg-light text-center">
+<p style="text-align:center">SELECT AND ADDRESS, ENTER THE COMPONENT AND SELECT A FREQUENCY IN MONTHS.
 
-  <h1 class="text-center mb-4">{% trans 'Add Equipment' %}</h1>
 
-  <h6>Frequency of the Maintenance added in Months</h6>
-
-  {% if messages %}
-    <ul class="messages mt-3 ">
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
+<div class="container mx-auto mt-3 mb-3 bg-light border border-dark text-center">
+  <div class="card">
+    <div class="card-header"; style="background-color: #aac0bf; padding: 10px";>
+      <h1 class="text-center mb-4">{% trans 'Add Equipment' %}</h1>
+    </div>
+  </div>
+  <br>
+  <div class="center"; style="background-color: #eed7a1; padding: 10px">
+  <h6>Frequency of the Maintenance is added in Months</h6>
+  </div>
+<br>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
 
     <label for="id_address">Address:</label>
     <select name="address" id="id_address">
@@ -31,9 +31,23 @@
       {% endfor %}
     </select>
     <br>
+    <br>
+    {{ form.component.label_tag }}
+    {{ form.component }}
+    <br>
+    <br>
+    {{ form.frequency.label_tag }}
+    {{ form.frequency }}
+    {% if form.frequency.errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ form.frequency.errors }}
+        </div>
+    {% endif %}
+    <br>
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
   </form>
 </div>
+
 
 {% endblock %}
 </html>

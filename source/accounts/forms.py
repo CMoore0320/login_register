@@ -227,29 +227,77 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['address']
+    
+    def clean_address(self):
+        address = self.cleaned_data['address']
+
+        if Address.objects.filter( address=address).exists():
+            raise ValidationError(_('You cannot use this address as it already exists.'))
+
+        return address
 
 class EquipmentForm(forms.ModelForm):
     
     class Meta:
         model = Equipment
         fields = ['component', 'frequency']
+    def clean_frequency(self):
+        frequency = self.cleaned_data['frequency']
+        if frequency <=0:
+            raise forms.ValidationError("Frequency cannot be negative or zero.")
+        return frequency
 
 
 class MaintenanceForm(forms.ModelForm):
-    dateCompleted = forms.DateField(widget=forms.SelectDateWidget)  # Define date field
+    dateCompleted = forms.DateField(widget=forms.SelectDateWidget)  
 
     class Meta:
         model = Maintenance
-        fields = ['component', 'dateCompleted']
+        fields = ['component', 'dateCompleted', 'maintenance_price', 'notes']
+        widgets = {
+            'notes': forms.Textarea(attrs={'rows': 4}),  # Set the number of rows as needed
+        }
+    
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Retrieve user from kwargs
         super(MaintenanceForm, self).__init__(*args, **kwargs)
+        if user:
+            user_addresses = Address.objects.filter(user=user)
+            # self.fields['address'] = forms.ModelChoiceField(queryset=user_addresses)
+            self.fields['component'].queryset = Equipment.objects.filter(address__in=user_addresses)
         
+        self.fields['component'].label_from_instance = lambda obj: f"{obj.address} - {obj.component}"
 
-
+    def clean_price(self):
+        price = self.cleaned_data.get('maintenance_price')
+        if price < 0:
+            raise forms.ValidationError("Price must be a non-negative value.")
+        return price
+   
 
 class ReceiptForm(forms.ModelForm):
     class Meta:
         model = Receipt
         fields = ['address', 'component', 'price', 'date', 'image']
+
+    def __init__(self, *args, **kwargs):
+        super(ReceiptForm, self).__init__(*args, **kwargs)
+        self.fields['address'].required = True   
+
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price < 0:
+            raise forms.ValidationError("Price must be a non-negative value.")
+        return price
+   
+    def clean(self):
+        cleaned_data = super().clean()
+        address = cleaned_data.get('address')
+        price = cleaned_data.get('price')
+        
+        if not address:
+            raise forms.ValidationError("Please choose an address.")
+        
+        if price is not None and price < 0:
+            raise forms.ValidationError("Price must be a non-negative value.")

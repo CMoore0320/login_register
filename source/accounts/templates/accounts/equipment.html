@@ -1,47 +1,88 @@
-<!DOCTYPE html>
 {% extends 'layouts/default/page.html' %}
-
+{%load static%}
 {% load bootstrap4 %}
 {% load i18n %}
 
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>User Equipment</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <style>
-            .container {
-                margin-top: 20px;
-            }
-            .equipment-list {
-                list-style-type: none;
-                padding: 0;
-            }
-            .equipment-item {
-                margin-bottom: 10px;
-                border: 1px solid #ccc;
-                padding: 10px;
-                border-radius: 5px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container bg-light mx-auto py-1 px-1 border border-5 border-dark text-center">
-            <h1>User Equipment List</h1>
-            <ul class="equipment-list">
-                {% for item in equipment_list %}
-                    <li class="equipment-item">
-                        <strong>Component:</strong> {{ item.equipment.component }}<br>
-                        <strong>Address:</strong> {{ item.address }}<br>
-                        <strong>Frequency:</strong> {{ item.equipment.frequency }} months
-                    </li>
-                {% endfor %}
-            </ul>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Equipment</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 20px;
+            padding-left: 30px;
+            padding-right: 30px; 
+        }
+        .equipment-table th,
+        .equipment-table td {
+            vertical-align: middle;
+        }
+        .maintenance-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .maintenance-item {
+            margin-bottom: 5px;
+        }
+        .maintenance-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container bg-light mx-auto py-1 px-1 border border-5 border-dark text-center">
+        <div style="background-color: #aac0bf; padding: 10px;">
+        <h1>User Equipment List</h1>
         </div>
-    </body>
-
+        <table class="table equipment-table">
+            <thead>
+                <tr>
+                    <th>Address</th>
+                    <th>Component</th>
+                    <th>Frequency</th>
+                    <th>Maintenance Records</th>
+                    <th>Delete Component</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in equipment_list %}
+                <tr>
+                    <td>{{ item.address }}</td>
+                    <td>{{ item.equipment.component }}</td>
+                    <td>{{ item.equipment.frequency }} months</td>
+                    <td>
+                        <ul class="maintenance-list">
+                            <div class="maintenance-header">Date Maintenance Completed:</div>
+                            {% for maintenance_record in item.maintenance_records %}         
+                                <li class="maintenance-item">
+                                    {{ maintenance_record.dateCompleted }}
+                                    <form method="post" action="{% url 'accounts:maintenance_delete' maintenance_record.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm" style="padding: 5px 5px; font-size: 12px";>Delete Maintenance</button>
+                                    </form>
+                                </li>
+                            {% empty %}
+                                <li class="maintenance-item">No records found.</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'accounts:component_delete' item.equipment.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Delete Component</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
 {% endblock %}

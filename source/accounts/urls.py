@@ -5,7 +5,8 @@ from .views import (
     LogInView, ResendActivationCodeView, RemindUsernameView, SignUpView, ActivateView, LogOutView,
     ChangeEmailView, ChangeEmailActivateView, ChangeProfileView, ChangePasswordView,
     RestorePasswordView, RestorePasswordDoneView, RestorePasswordConfirmView, LogOutConfirmView,address_form, AddEquipment, 
-    maintenance,equipment, get_components, receipts, index
+    maintenance,equipment, get_components, receipts, dashboard, showReceipt, delete, maintenance_delete, receipt_delete, reports,
+    component_delete,
 )
 
 app_name = 'accounts'
@@ -36,6 +37,13 @@ urlpatterns = [
     path('maintenance/', maintenance, name = 'maintenance'),
     path('equipment/', equipment, name = 'equipment'),
     path('get-components/', get_components, name='get_components'),
-    path('', index, name= 'index'),
-    
+    path('', dashboard, name= 'dashboard'),
+    path('dashboard', dashboard, name= 'dashboard'),
+    path('show_receipt/', showReceipt, name = 'show_receipt'),
+    path('delete/<int:address_id>/', delete, name='delete'),
+    path('maintenance_delete/<int:maintenance>/', maintenance_delete, name='maintenance_delete'),
+    path('component_delete/<int:component_id>/', component_delete, name='component_delete'),
+    path('receipt_delete/<int:receipt_id>/', receipt_delete, name='receipt_delete'),
+    path('reports', reports, name='reports'),
+
 ]

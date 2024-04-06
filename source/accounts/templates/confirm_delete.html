@@ -1,0 +1,19 @@
+{% extends 'layouts/default/page.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+    <h2>Confirm Deletion of {{ delete_type }}</h2>
+    <ul>
+        {% for item in items %}
+            <li>
+                {{ item }}
+                <form method="post" action="{% url 'accounts:confirm_delete' delete_type item.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Confirm Deletion</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+

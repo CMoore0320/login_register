@@ -1,0 +1,170 @@
+
+{% extends 'layouts/default/page.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show Receipts</title>
+  <style>
+    /* CSS for styling popup */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      padding-top: 50px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,50);
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+    }
+
+    .close {
+      color: #fff;
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* CSS for thumbnail images */
+    .thumbnail {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    /* CSS for table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+      background-color: #aac0bf;
+    }
+  </style>
+</head>
+<body>
+  <div style="background-color: #aac0bf; padding: 10px;">
+  <form method="get" action="{% url 'accounts:show_receipt' %}">
+    <label for="address">Address:</label>
+    <select id="address" name="address">
+        <option value="">Select Address</option>
+        {% for address in addresses %}
+            <option value="{{ address }}">{{ address }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="component">Component:</label>
+    <select id="component" name="component" >
+        <option value="">Select Component</option>
+        {% for component in components %}
+            <option value="{{ component }}">{{ component }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="start_date">Start Date:</label>
+    <input type="date" id="start_date" name="start_date" placeholder="Start Date">
+
+    <label for="end_date">End Date:</label>
+    <input type="date" id="end_date" name="end_date" placeholder="End Date">
+
+    <label for="low_price"></label>
+    <input type="number" id="low_price" name="low_price" step="0.01" placeholder="Minimum Price">
+
+    <label for="high_price"></label>
+    <input type="number" id="high_price" name="high_price" step="0.01" placeholder="Maximum Price">
+
+    <button type="submit">Search</button>
+  </form>
+  </div>
+
+<!-- Display receipts in a table format-->
+{% if receipts %}
+  <table>
+    <thead>
+      <tr>
+        <th>Address</th>
+        <th>Component</th>
+        <th>Price</th>
+        <th>Date</th>
+        <th>Thumbnail</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for receipt in receipts %}  
+        <tr>  
+          <td>{{ receipt.address }}</td>
+          <td>{{ receipt.component }}</td>
+          <td>{{ receipt.price }}</td>
+          <td>{{ receipt.date }}</td>
+          <td><img src="{{ receipt.image.url }}" alt="{{ receipt.component }}" class="thumbnail" data-src="{{ receipt.image.url }}"></td>
+          <td>
+            <form method="post" action="{% url 'accounts:receipt_delete' receipt.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No receipts found.</p>
+{% endif %}
+
+<!-- All of this to get the image to generate into full screen -->
+<div id="imageModal" class="modal">
+  <span class="close">&times;</span>
+  <img class="modal-content" id="fullImage">
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $(".thumbnail").click(function(){
+    $("#fullImage").attr("src", $(this).attr("data-src"));
+    $("#imageModal").css("display", "block");
+  });
+
+  $(".close").click(function(){
+    $("#imageModal").css("display", "none");
+  });
+});
+</script>
+
+</body>
+</html>
+
+{% endblock %}

@@ -1,37 +1,56 @@
-<!DOCTYPE html>
-<html>
 {% extends 'layouts/default/page.html' %}
-
 {% load bootstrap4 %}
 {% load i18n %}
 {% block content %}
 
-<!-- <head style="text-align: center;">
-  <title>Address Form</title>
-</head> -->
-
-<div style="text-align: center;">
-    <h4>{% trans 'Address Form' %}</h4>
-</div>
-
-
-{% if messages %}
-<ul class="messages">
-  {% for message in messages %}
-    <li>{{ message }}</li>
-  {% endfor %}
-</ul>
-{% endif %}
-
+<p style="text-align: center;">Enter your address in the space below then submit.</p>
 <div class="container mx-auto">
     <div class="card rounded-sm shadow-sm bg-light border border-dark mb-3">
-      <div class="card-body py-4 px-5 row">
-        <div class="col-md-8 offset-md-2 text-center" >  {{ form.as_p }}
-          <button type="submit" class="btn btn-secondary">Submit</button>
+      <div class="card-body">
+        <div class="text-center">
+          <div class="card">
+            <div class="card-header"; style="background-color: #aac0bf; padding: 10px">
+              <h1 class="text-center mb-4">{% trans 'Address Form' %}</h1>
+            </div>
+          </div>
+          
+        <br>
+        <br>
+          <form method="post" action="{% url 'accounts:address_form' %}">
+            <ul class="error-messages">
+              {% for error in form.non_field_errors %}
+                  <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
         </div>
       </div>
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Address</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for address in addresses %}
+            <tr>
+                <td>{{ address.address }}</td>
+                <td>
+                    <form method="post" action="{% url 'accounts:delete' address.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     </div>
   </div>
 
 {% endblock %}
-</html>
+
