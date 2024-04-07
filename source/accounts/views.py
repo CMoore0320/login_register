@@ -7,7 +7,7 @@ from django.contrib.auth.views import (
     PasswordResetDoneView as BasePasswordResetDoneView, PasswordResetConfirmView as BasePasswordResetConfirmView,
 )
 from django.views.generic.base import TemplateView
-from django.shortcuts import get_object_or_404, redirect,render, HttpResponse
+from django.shortcuts import get_object_or_404, redirect,render
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.utils.http import url_has_allowed_host_and_scheme as is_safe_url
@@ -19,11 +19,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import View, FormView
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from django.core import serializers 
+from django.http import  JsonResponse
+# from django.core import serializers 
 from datetime import timedelta, datetime
-from django.db.models import Q, Max, Sum
+from django.db.models import Q, Sum
 from django.utils import timezone
+from operator import itemgetter
 
 from .utils import (
     send_activation_email, send_reset_password_email, send_forgotten_username_email, send_activation_change_email,
@@ -138,7 +139,7 @@ class SignUpView(GuestOnlyView, FormView):
 
             messages.success(request, _('You are successfully signed up!'))
 
-        return redirect('index')
+        return redirect('accounts:log_in')
 
 
 class ActivateView(View):
@@ -406,12 +407,12 @@ def maintenance(request):
         form = MaintenanceForm(request.POST, user=request.user) 
         if form.is_valid():
             maintenance_instance = form.save(commit=False)
-            maintenance_instance.save()
-            if maintenance_instance.maintenance_price <0:
+            
+            if maintenance_instance.maintenance_price < 0:
                 messages.error(request, 'Cannot Enter a Negatice Price')
 
-
             else:
+                maintenance_instance.save()
                 messages.success(request, 'Maintenance record submitted successfully!') 
                 return redirect('accounts:maintenance') 
     else:
@@ -423,6 +424,7 @@ def maintenance(request):
 
 def equipment(request):
     equipment_instances = Equipment.objects.filter(address__user=request.user)
+    
     equipment_list = []
     for equipment_instance in equipment_instances:
         address = equipment_instance.address.address
@@ -441,20 +443,21 @@ def get_components(request):
 
 
 def dashboard(request):
-    total_overdue_tasks = ...  # Calculate total overdue tasks
-    total_properties = ...  # Calculate total properties
-    total_components = ...  # Calculate total components
-    total_maintenance_tasks = ...  # Calculate total maintenance tasks
-
+    user_addresses = Address.objects.filter(user=request.user)
     equipments = Equipment.objects.filter(address__user=request.user)
     now = datetime.now().date()
 
+
+
+    total_properties = user_addresses.values('address').distinct().count()
+    total_components = Equipment.objects.filter(address__user=request.user).count()
+    # total_maintenance_tasks = Maintenance.objects.filter(component__address__user=request.user).count()
+    total_overdue_tasks= 0
     # Initialize list to store component details
     component_next_maintenance = []
 
-    # Iterate over each equipment
+    
     for equipment in equipments:
-        # Get the most recent maintenance record for the equipment
         latest_maintenance = Maintenance.objects.filter(component=equipment).order_by('-dateCompleted').first()
         
         if latest_maintenance:
@@ -463,13 +466,14 @@ def dashboard(request):
             
             current_date = datetime.now().date()
             if next_maintenance_date < current_date:
+                total_overdue_tasks = total_overdue_tasks+1
                 status = 'red'  # Overdue
             elif current_date <= next_maintenance_date < current_date + timedelta(days=30):
                 status = 'yellow'  # Due within 30 days
             else:
                 status = 'none'  # Not due yet
             # Check if the next maintenance is less than 2 months away from today
-            if next_maintenance_date < now + timedelta(days=60):
+            if next_maintenance_date < now + timedelta(days=89):
                 # Store the component and next maintenance date
                 component_next_maintenance.append({
                     'component': equipment.component,
@@ -478,11 +482,13 @@ def dashboard(request):
                     'status': status
                 })
 
+
     return render(request, 'accounts/dashboard.html', {'component_next_maintenance': component_next_maintenance,
-                                                       'total_overdue_tasks': total_overdue_tasks,
+                                                        'total_overdue_tasks': total_overdue_tasks,
                                                         'total_properties': total_properties,
                                                         'total_components': total_components,
-                                                        'total_maintenance_tasks': total_maintenance_tasks,})
+                                                        # 'total_maintenance_tasks': total_maintenance_tasks,
+                                                        })
 
 
 
@@ -497,7 +503,7 @@ def showReceipt(request):
     low_price = request.GET.get('low_price')
     high_price = request.GET.get('high_price')
 
-    # Construct a filter query based on provided parameters
+    # Construct a filter query based on user inputted parameters
     filter_query = {}
     if address:
         filter_query['address__address__icontains'] = address
@@ -527,7 +533,6 @@ def delete(request, address_id):
         return redirect('accounts:address_form')
     
 
-
 def maintenance_delete(request, maintenance):
     try:
         maintenance = Maintenance.objects.get(pk = maintenance)
@@ -553,62 +558,63 @@ def receipt_delete(request, receipt_id):
         return redirect('accounts:show_receipt')
 
 
-
 def reports(request):
-    # addresses = Address.objects.filter(user=request.user)
-    # components = Equipment.objects.filter(address__in=addresses)
-    # maintenance = Maintenance.objects.filter(component__in=components)
-    # equipment_instances = Equipment.objects.filter(address__user=request.user)
-    # equipment_list = []
-    # for equipment_instance in equipment_instances:
-    #     address = equipment_instance.address.address
-    #     user = equipment_instance.address.user
-    #     maintenance_records = equipment_instance.maintenance_set.order_by('-dateCompleted')
-    #     equipment_list.append({'equipment': equipment_instance, 'address': address, 'user': user,'maintenance_records': maintenance_records})
-    current_user = request.user
+    addresses = Address.objects.filter(user=request.user)
+    components = Equipment.objects.filter(address__user=request.user).values_list('component', flat=True).distinct()
+    
     address = request.GET.get('address')
     component = request.GET.get('component')
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
     low_price = request.GET.get('low_price')
     high_price = request.GET.get('high_price')
 
     # Construct a filter query based on provided parameters
-    filter_query = {'component__address__user': current_user}
+    filter_query = Q(component__address__user=request.user)
     if address:
-        filter_query['address__address__icontains'] = address
+        filter_query &= Q(component__address__address__icontains=address)
     if component:
-        filter_query['component__icontains'] = component
-    if start_date:
-        filter_query['date__gte'] = start_date
-    if end_date:
-        filter_query['date__lte'] = end_date
+        filter_query &= Q(component__component__icontains=component)
     if low_price:
-        filter_query['price__gte'] = low_price
+        filter_query &= Q(maintenance_price__gte=low_price)
     if high_price:
-        filter_query['price__lte'] = high_price
-
+        filter_query &= Q(maintenance_price__lte=high_price)
     
-    maintenance = Maintenance.objects.filter(**filter_query)
+    # Fetch all maintenance records
+    maintenance_records = Maintenance.objects.filter(filter_query)
 
+    # Dictionary to store the latest maintenance record for each component at each address
+    latest_maintenance_records = {}
+
+    # Iterate over all maintenance records to find the latest one for each component at each address
+    for record in maintenance_records:
+        address = record.component.address
+        component_name = record.component.component
+        last_maintenance_date = record.dateCompleted
+        if (address, component_name) not in latest_maintenance_records:
+            latest_maintenance_records[(address, component_name)] = {
+                'record': record,
+                'last_maintenance_date': last_maintenance_date
+            }
+        elif last_maintenance_date > latest_maintenance_records[(address, component_name)]['last_maintenance_date']:
+            latest_maintenance_records[(address, component_name)] = {
+                'record': record,
+                'last_maintenance_date': last_maintenance_date
+            }
+
+    # Generate component_status_and_price list from latest maintenance records
     component_status_and_price = []
-    for maintenance_record in maintenance:
-        component = maintenance_record.component
-        last_maintenance_date = component.maintenance_set.aggregate(last_date=Max('dateCompleted'))['last_date']
+    for data in latest_maintenance_records.values():
+        record = data['record']
+        component = record.component
+        last_maintenance_date = data['last_maintenance_date']
         frequency = component.frequency
         if last_maintenance_date:
-            next_due_date = last_maintenance_date + timedelta(days=frequency)
+            next_due_date = last_maintenance_date + timedelta(days=30*frequency)
             status = "Current" if next_due_date >= timezone.now().date() else "Overdue"
         else:
             status = "No Maintenance"
         total_price = component.maintenance_set.filter(dateCompleted__lte=timezone.now().date()).aggregate(total=Sum('maintenance_price'))['total']
-        component_status_and_price.append({'component': component, 'status': status, 'total_price': total_price})
+        component_status_and_price.append({'component': component, 'status': status, 'next_due_date': next_due_date, 'total_price': total_price})
 
-    return render(request, 'accounts/reports.html', {'component_status_and_price': component_status_and_price})
-
-    # return render(request, 'accounts/reports.html', {'maintenance': maintenance, 'equipment_list': equipment_list})
-
-
-
-
+    component_status_and_price.sort(key=itemgetter('next_due_date'))
+    return render(request, 'accounts/reports.html', {'component_status_and_price': component_status_and_price, 'addresses': addresses,  'components': components})
 

@@ -18,7 +18,6 @@ from .models import Address, Equipment, Maintenance, Receipt
 class UserCacheMixin:
     user_cache = None
 
-
 class SignIn(UserCacheMixin, forms.Form):
     password = forms.CharField(label=_('Password'), strip=False, widget=forms.PasswordInput)
 
@@ -222,6 +221,10 @@ class ChangeEmailForm(forms.Form):
 class RemindUsernameForm(EmailForm):
     pass
 
+
+########################  THIS SECTIONS BEGINS MY ADDITION TO THIS PROJECT    ###################################
+
+
 class AddressForm(forms.ModelForm):
     
     class Meta:
@@ -258,24 +261,16 @@ class MaintenanceForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={'rows': 4}),  # Set the number of rows as needed
         }
     
-
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)  # Retrieve user from kwargs
         super(MaintenanceForm, self).__init__(*args, **kwargs)
         if user:
             user_addresses = Address.objects.filter(user=user)
-            # self.fields['address'] = forms.ModelChoiceField(queryset=user_addresses)
             self.fields['component'].queryset = Equipment.objects.filter(address__in=user_addresses)
         
         self.fields['component'].label_from_instance = lambda obj: f"{obj.address} - {obj.component}"
 
-    def clean_price(self):
-        price = self.cleaned_data.get('maintenance_price')
-        if price < 0:
-            raise forms.ValidationError("Price must be a non-negative value.")
-        return price
-   
-
+  
 class ReceiptForm(forms.ModelForm):
     class Meta:
         model = Receipt

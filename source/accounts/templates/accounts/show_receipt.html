@@ -74,6 +74,12 @@
     }
   </style>
 </head>
+<div class="header">
+  <div style="background-color: #cdc9d1; text-align: center; padding: 30px ">
+  <h1> Receipt</h1>
+
+  </div>
+</div>
 <body>
   <div style="background-color: #aac0bf; padding: 10px;">
   <form method="get" action="{% url 'accounts:show_receipt' %}">
@@ -111,38 +117,43 @@
 
 <!-- Display receipts in a table format-->
 {% if receipts %}
-  <table>
-    <thead>
-      <tr>
-        <th>Address</th>
-        <th>Component</th>
-        <th>Price</th>
-        <th>Date</th>
-        <th>Thumbnail</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for receipt in receipts %}  
-        <tr>  
-          <td>{{ receipt.address }}</td>
-          <td>{{ receipt.component }}</td>
-          <td>{{ receipt.price }}</td>
-          <td>{{ receipt.date }}</td>
-          <td><img src="{{ receipt.image.url }}" alt="{{ receipt.component }}" class="thumbnail" data-src="{{ receipt.image.url }}"></td>
-          <td>
-            <form method="post" action="{% url 'accounts:receipt_delete' receipt.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% else %}
-  <p>No receipts found.</p>
-{% endif %}
+<div class="card">
+  <div class="card-body">
+      <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>Component</th>
+              <th>Price</th>
+              <th>Date</th>
+              <th>Thumbnail</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for receipt in receipts %}  
+              <tr>  
+                <td>{{ receipt.address }}</td>
+                <td>{{ receipt.component }}</td>
+                <td>{{ receipt.price }}</td>
+                <td>{{ receipt.date }}</td>
+                <td><img src="{{ receipt.image.url }}" alt="{{ receipt.component }}" class="thumbnail" data-src="{{ receipt.image.url }}"></td>
+                <td>
+                  <form method="post" action="{% url 'accounts:receipt_delete' receipt.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>No receipts found.</p>
+      {% endif %}
+  </div>
+</div>
+
 
 <!-- All of this to get the image to generate into full screen -->
 <div id="imageModal" class="modal">

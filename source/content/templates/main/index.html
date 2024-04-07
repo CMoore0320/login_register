@@ -3,8 +3,21 @@
 {% load i18n %}
 
 {% block content %}
-    <div style="text-align: center;">
+<div class="container mx-auto  text-center">
+    <div style="text-align: center; background-color: #cdc9d1; border: 3px solid black;border-width: 5;  text-align: center; padding: 50px ">
         <h1>WELCOME TO THE HOUSE BRAIN</h1>
+    </div>
+</div>
+    <br>
+    <br>
+    <div class="container mx-auto  text-center">
+        <div style="background-color: #aac0bf; border: 1px solid black; border-radius: 10px; border-width: 5;">
+            <br>
+                <p>AT THE HOUSE BRAIN, WE PROVIDE A WAY TO TRACK MAINTENANCE AND RECEIPTS FOR ONE TO MANY PROPERTIES. </p>
+                <p>IF YOU HAVE ONE HOUSE OR MANY, THIS WILL HELP BY TRACKING THE LAST TIME YOU HAVE COMPLETED THE MAINTENANCE,</p> 
+                <p>ANY COST THAT YOU HAVE INCURRED FROM THE MAINTENANCE, AS WELL AS STORE RECEIPTS FOR EASE OF REFERENCE IN THE FUTURE. </p>  
+            <br>
+        </div>
     </div>
 
     {% if request.user.is_authenticated %}
@@ -49,7 +62,10 @@
             </tbody>
         </table>
     {% else %}
-        {% trans 'Please Log In or Create an Account to continue' %}
+    <br>
+    <br> 
+    <div class="card-header; text-center">
+        <h1>{% trans 'Please Log In or Create an Account to continue' %} </h1>
+    </div>
     {% endif %}
 {% endblock %}
-

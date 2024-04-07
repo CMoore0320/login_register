@@ -2,68 +2,71 @@
 {% load static %}
 
 {% block content %}
-<div style="text-align: center;">
+<div style="text-align: center; background-color: #aac0bf; border: 1px solid black; border-radius: 10px;">
     <h1>WELCOME TO THE HOUSE BRAIN</h1>
+    <p>TRACK AND MANAGE MAINTENANCE ITEMS FOR A SINGLE HOUSE OR MULTIPLE PROPERTIES</p>
+    <p>SUBMIT RECEIPTS TO SAVE AND DOCUMENT ALL EXPENSES</p>
 </div>
 <br>
-<br>
-<br>
-<br>
-<div style="float: left; width: 50%;">
-    <h2>Components Due for Maintenance</h2>
-    <table style="border-collapse: collapse;">
-        <thead>
-            <tr>
-                <th style="border: 1px solid black; padding: 8px;">Address</th>
-                <th style="border: 1px solid black; padding: 8px;">Component</th>
-                <th style="border: 1px solid black; padding: 8px;">Next Maintenance Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in component_next_maintenance %}
-                <tr 
-                {% if item.status == 'red' %}
-                    style="background-color: #FFCCCC"
-                {% elif item.status == 'yellow' %}
-                    style="background-color:#FFFF99"
-                {% else %}
-                    style="background-color:#FFFFFF";
-                {% endif %}; border: 1px solid black;>
-                    <td style="border: 1px solid black; padding: 8px;">{{ item.address }}</td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ item.component }}</td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ item.next_maintenance_date }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-<div style="display: flex; justify-content: space-around; margin-top: 30px;">
-    <!-- Summary of Maintenance Tasks -->
-    <div style="width: 30%;">
-        <h2>Summary of Maintenance Tasks</h2>
-        <div>
-            <h3>Total Overdue Tasks</h3>
-            <p>{{ total_overdue_tasks }}</p>
+<div style="display: flex; justify-content: space-around; padding: 0 20px;">
+    <!-- Components Due for Maintenance -->
+    <div style="width: calc(50% - 20px);">
+        <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid black; border-radius: 10px;">
+            <h2 style="margin-top: 0;">Components Due for Maintenance</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid black; padding: 8px;">Address</th>
+                        <th style="border: 1px solid black; padding: 8px;">Component</th>
+                        <th style="border: 1px solid black; padding: 8px;">Next Maintenance Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in component_next_maintenance %}
+                        <tr 
+                        {% if item.status == 'red' %}
+                            style="background-color: #FFCCCC"
+                        {% elif item.status == 'yellow' %}
+                            style="background-color:#FFFF99"
+                        {% else %}
+                            style="background-color:#FFFFFF";
+                        {% endif %}; border: 1px solid black;">
+                            <td style="border: 1px solid black; padding: 8px;">{{ item.address }}</td>
+                            <td style="border: 1px solid black; padding: 8px;">{{ item.component }}</td>
+                            <td style="border: 1px solid black; padding: 8px;">{{ item.next_maintenance_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-    <br>
-    <!-- Key Metrics -->
-    <div style="width: 30%;">
-        <h2>Key Metrics</h2>
-        <div>
-            <h3>Total Properties</h3>
-            <p>{{ total_properties }}</p>
-        </div>
-        <div>
-            <h3>Total Components</h3>
-            <p>{{ total_components }}</p>
-        </div>
-        <div>
-            <h3>Total Maintenance Tasks</h3>
-            <p>{{ total_maintenance_tasks }}</p>
+    <!-- Summary of Maintenance Tasks -->
+    <div style="width: calc(40% - 30px);">
+        <div style="background-color: #f8f9fa; padding: 20px; border: 1px solid #0f0f0f; border-radius: 10px;">
+            <h2 style="margin-top: 0; text-align: center;">Summary</h2>
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <h5>Total Overdue Tasks</h5>
+                    <div style="text-align: center;">
+                        <p>{{ total_overdue_tasks }}</p>
+                    </div>
+                </div>
+                <div>
+                    <h5>Total Properties</h5>
+                    <div style="text-align: center;">
+                        <p>{{ total_properties }}</p>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <h5>Total Components</h5>
+                    <div style="text-align: center;">
+                        <p>{{ total_components }}</p>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>
 {% endblock %}
-
 

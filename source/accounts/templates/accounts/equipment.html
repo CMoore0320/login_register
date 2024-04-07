@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Equipment</title>
+    <!-- <title>User Equipment</title> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .container {
@@ -37,8 +37,10 @@
 </head>
 <body>
     <div class="container bg-light mx-auto py-1 px-1 border border-5 border-dark text-center">
+  </form>
         <div style="background-color: #aac0bf; padding: 10px;">
-        <h1>User Equipment List</h1>
+        <h1>Equipment and Maintenance Record</h1>
+
         </div>
         <table class="table equipment-table">
             <thead>
@@ -57,21 +59,33 @@
                     <td>{{ item.equipment.component }}</td>
                     <td>{{ item.equipment.frequency }} months</td>
                     <td>
-                        <ul class="maintenance-list">
-                            <div class="maintenance-header">Date Maintenance Completed:</div>
-                            {% for maintenance_record in item.maintenance_records %}         
-                                <li class="maintenance-item">
-                                    {{ maintenance_record.dateCompleted }}
-                                    <form method="post" action="{% url 'accounts:maintenance_delete' maintenance_record.id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm" style="padding: 5px 5px; font-size: 12px";>Delete Maintenance</button>
-                                    </form>
-                                </li>
+                        <div class="accordion" id="accordion{{ forloop.counter }}">
+                            {% for maintenance_record in item.maintenance_records %}
+                                <div class="card">
+                                    <div class="card-header" id="heading{{ forloop.parentloop.counter }}{{ forloop.counter }}">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.parentloop.counter }}{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.parentloop.counter }}{{ forloop.counter }}">
+                                                Date: {{ maintenance_record.dateCompleted }}
+                                            </button>
+                                        </h5>
+                                    </div>
+                                    <div id="collapse{{ forloop.parentloop.counter }}{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.parentloop.counter }}{{ forloop.counter }}" data-parent="#accordion{{ forloop.counter }}">
+                                        <div class="card-body">
+                                            Price: ${{ maintenance_record.maintenance_price }} <br>
+                                            Notes: {{ maintenance_record.notes }}
+                                            <form method="post" action="{% url 'accounts:maintenance_delete' maintenance_record.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm mt-2">Delete Maintenance</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             {% empty %}
-                                <li class="maintenance-item">No records found.</li>
+                                <p>No records found.</p>
                             {% endfor %}
-                        </ul>
+                        </div>
                     </td>
+                    
                     <td>
                         <form method="post" action="{% url 'accounts:component_delete' item.equipment.id %}">
                             {% csrf_token %}
@@ -83,6 +97,18 @@
             </tbody>
         </table>
     </div>
+    <script>
+        // jQuery to control accordion behavior
+        $(document).ready(function(){
+            $('.accordion').each(function(){
+                $(this).on('show.bs.collapse', function () {
+                    $(this).find('.collapse.show').collapse('hide');
+                });
+            });
+        });
+    </script>
+
+    
 </body>
 </html>
 {% endblock %}
