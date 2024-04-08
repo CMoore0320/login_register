@@ -31,6 +31,10 @@ urlpatterns = [
     path('change/password/', ChangePasswordView.as_view(), name='change_password'),
     path('change/email/', ChangeEmailView.as_view(), name='change_email'),
     path('change/email/<code>/', ChangeEmailActivateView.as_view(), name='change_email_activation'),
+
+
+############### Additional URL's added for my project #######################################
+
     path('address/form/', address_form, name='address_form'),
     path('add/equipment/', AddEquipment, name= 'add_equipment'),
     path('receipts/', receipts, name='receipts'),
