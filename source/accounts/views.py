@@ -344,6 +344,10 @@ class LogOutView(LoginRequiredMixin, BaseLogoutView):
     template_name = 'accounts/log_out.html'
 
 
+############################# EVERYTHING BELOW IS ADDED FOR MY PROJECT #############################################
+
+
+
 def address_form(request):
     addresses = Address.objects.filter(user=request.user)
     if request.method =='POST':

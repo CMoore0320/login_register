@@ -11,6 +11,9 @@ class Activation(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+
+######################## Everything below is additional for my project  ##############################
 
 
 class Address(models.Model):
