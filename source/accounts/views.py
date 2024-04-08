@@ -371,7 +371,7 @@ def AddEquipment(request):
             address_id = request.POST.get('address')
             equipment_instance.address_id = address_id
             existing_equipment = Equipment.objects.filter(
-                address_id=address_id, component=equipment_instance.component
+                address_id=address_id, component=equipment_instance.component, description=equipment_instance.description
             ).exists()
 
             if existing_equipment:
@@ -429,8 +429,9 @@ def equipment(request):
     for equipment_instance in equipment_instances:
         address = equipment_instance.address.address
         user = equipment_instance.address.user
+        description =equipment_instance.description
         maintenance_records = equipment_instance.maintenance_set.order_by('-dateCompleted')
-        equipment_list.append({'equipment': equipment_instance, 'address': address, 'user': user,'maintenance_records': maintenance_records})
+        equipment_list.append({'equipment': equipment_instance, 'address': address, 'description':description, 'user': user,'maintenance_records': maintenance_records})
     return render(request, 'accounts/equipment.html', {'equipment_list': equipment_list})
 
 
@@ -473,10 +474,11 @@ def dashboard(request):
             else:
                 status = 'none'  # Not due yet
             # Check if the next maintenance is less than 2 months away from today
-            if next_maintenance_date < now + timedelta(days=89):
+            if next_maintenance_date < now + timedelta(days=90):
                 # Store the component and next maintenance date
                 component_next_maintenance.append({
                     'component': equipment.component,
+                    'description':equipment.description,
                     'address': equipment.address.address,
                     'next_maintenance_date': next_maintenance_date,
                     'status': status
@@ -487,7 +489,7 @@ def dashboard(request):
                                                         'total_overdue_tasks': total_overdue_tasks,
                                                         'total_properties': total_properties,
                                                         'total_components': total_components,
-                                                        # 'total_maintenance_tasks': total_maintenance_tasks,
+                                                        
                                                         })
 
 
@@ -562,6 +564,7 @@ def reports(request):
     addresses = Address.objects.filter(user=request.user)
     components = Equipment.objects.filter(address__user=request.user).values_list('component', flat=True).distinct()
     
+    
     address = request.GET.get('address')
     component = request.GET.get('component')
     low_price = request.GET.get('low_price')
@@ -588,6 +591,7 @@ def reports(request):
     for record in maintenance_records:
         address = record.component.address
         component_name = record.component.component
+        description = record.component.description
         last_maintenance_date = record.dateCompleted
         if (address, component_name) not in latest_maintenance_records:
             latest_maintenance_records[(address, component_name)] = {
@@ -605,6 +609,7 @@ def reports(request):
     for data in latest_maintenance_records.values():
         record = data['record']
         component = record.component
+        description = record.component.description
         last_maintenance_date = data['last_maintenance_date']
         frequency = component.frequency
         if last_maintenance_date:
@@ -613,8 +618,10 @@ def reports(request):
         else:
             status = "No Maintenance"
         total_price = component.maintenance_set.filter(dateCompleted__lte=timezone.now().date()).aggregate(total=Sum('maintenance_price'))['total']
-        component_status_and_price.append({'component': component, 'status': status, 'next_due_date': next_due_date, 'total_price': total_price})
+        component_status_and_price.append({'component': component, 'description':description,'status': status, 'next_due_date': next_due_date, 'total_price': total_price})
 
     component_status_and_price.sort(key=itemgetter('next_due_date'))
     return render(request, 'accounts/reports.html', {'component_status_and_price': component_status_and_price, 'addresses': addresses,  'components': components})
 
+def getting_started(request):
+    return render(request, 'accounts/getting_started.html')

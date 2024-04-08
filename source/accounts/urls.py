@@ -6,7 +6,7 @@ from .views import (
     ChangeEmailView, ChangeEmailActivateView, ChangeProfileView, ChangePasswordView,
     RestorePasswordView, RestorePasswordDoneView, RestorePasswordConfirmView, LogOutConfirmView,address_form, AddEquipment, 
     maintenance,equipment, get_components, receipts, dashboard, showReceipt, delete, maintenance_delete, receipt_delete, reports,
-    component_delete,
+    component_delete, getting_started,
 )
 
 app_name = 'accounts'
@@ -45,5 +45,6 @@ urlpatterns = [
     path('component_delete/<int:component_id>/', component_delete, name='component_delete'),
     path('receipt_delete/<int:receipt_id>/', receipt_delete, name='receipt_delete'),
     path('reports', reports, name='reports'),
+    path('getting/started', getting_started, name='getting_started'),
 
 ]

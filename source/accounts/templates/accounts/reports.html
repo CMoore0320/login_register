@@ -6,7 +6,7 @@
 {% block content %}
 <div class="header">
     <div style="background-color: #cdc9d1; text-align: center; padding: 30px ">
-    <h1> Report</h1>
+    <h1> Periodic Maintenance Report</h1>
 
     </div>
 </div>
@@ -49,6 +49,7 @@
                     <tr>
                         <th>Address</th>
                         <th>Component</th>
+                        <th>Decription</th>
                         <th>Next Due Date</th>
                         <th>Status</th>
                         <th>Total Price</th>
@@ -59,6 +60,7 @@
                     <tr>
                         <td>{{ record.component.address }}</td>
                         <td>{{ record.component }}</td>
+                        <td>{{ record.description }}</td>
                         <td>{{ record.next_due_date|date:"F d, Y" }}</td>
                         {% if record.status == 'Overdue' %}  
                             <td style="background-color: #FFCCCC">{{ record.status }}</td>

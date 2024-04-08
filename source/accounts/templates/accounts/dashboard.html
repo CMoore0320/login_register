@@ -15,27 +15,34 @@
             <h2 style="margin-top: 0;">Components Due for Maintenance</h2>
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
-                    <tr>
-                        <th style="border: 1px solid black; padding: 8px;">Address</th>
-                        <th style="border: 1px solid black; padding: 8px;">Component</th>
-                        <th style="border: 1px solid black; padding: 8px;">Next Maintenance Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in component_next_maintenance %}
-                        <tr 
-                        {% if item.status == 'red' %}
-                            style="background-color: #FFCCCC"
-                        {% elif item.status == 'yellow' %}
-                            style="background-color:#FFFF99"
-                        {% else %}
-                            style="background-color:#FFFFFF";
-                        {% endif %}; border: 1px solid black;">
-                            <td style="border: 1px solid black; padding: 8px;">{{ item.address }}</td>
-                            <td style="border: 1px solid black; padding: 8px;">{{ item.component }}</td>
-                            <td style="border: 1px solid black; padding: 8px;">{{ item.next_maintenance_date }}</td>
+                    {% if component_next_maintenance %}
+                        <tr>
+                            <th style="border: 1px solid black; padding: 8px;">Address</th>
+                            <th style="border: 1px solid black; padding: 8px;">Component</th>
+                            <th style="border: 1px solid black; padding: 8px;">Description</th>
+                            <th style="border: 1px solid black; padding: 8px;">Next Maintenance Date</th>
                         </tr>
-                    {% endfor %}
+                    </thead>
+                    <tbody>
+                    
+                        {% for item in component_next_maintenance %}
+                            <tr 
+                            {% if item.status == 'red' %}
+                                style="background-color: #FFCCCC"
+                            {% elif item.status == 'yellow' %}
+                                style="background-color:#FFFF99"
+                            {% else %}
+                                style="background-color:#FFFFFF";
+                            {% endif %}; border: 1px solid black;">
+                                <td style="border: 1px solid black; padding: 8px;">{{ item.address }}</td>
+                                <td style="border: 1px solid black; padding: 8px;">{{ item.component }}</td>
+                                <td style="border: 1px solid black; padding: 8px;">{{ item.description }}</td>
+                                <td style="border: 1px solid black; padding: 8px;">{{ item.next_maintenance_date }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                            <h7>RELAX... THERE'S NO MAINTENANCE DUE IN THE NEXT 3 MONTHS</h7>
+                    {% endif %}
                 </tbody>
             </table>
         </div>

@@ -230,9 +230,10 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['address']
-    
+
     def clean_address(self):
         address = self.cleaned_data['address']
+        
 
         if Address.objects.filter( address=address).exists():
             raise ValidationError(_('You cannot use this address as it already exists.'))
@@ -243,7 +244,7 @@ class EquipmentForm(forms.ModelForm):
     
     class Meta:
         model = Equipment
-        fields = ['component', 'frequency']
+        fields = ['component', 'description', 'frequency']
     def clean_frequency(self):
         frequency = self.cleaned_data['frequency']
         if frequency <=0:

@@ -25,9 +25,10 @@ class Equipment(models.Model):
     address = models.ForeignKey(Address, on_delete=models.CASCADE )
     component = models.CharField(max_length=150, unique=False)
     frequency = models.IntegerField()
+    description = models.CharField(max_length=50, unique=False, default='Replace')
 
     class Meta:
-        unique_together = (('address', 'component'),)
+        unique_together = (('address', 'component','description'),)
 
     def __str__(self):
         return self.component
@@ -41,7 +42,7 @@ class Maintenance(models.Model):
     notes = models.CharField(max_length=300, blank=True, default="No Notes")
 
     class Meta:
-        unique_together = (('component', 'dateCompleted'),)
+        unique_together = (('component', 'dateCompleted','maintenance_price'),)
 
     def __str__(self):
         return self.component + ' ' + self.dateCompleted

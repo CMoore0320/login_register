@@ -1,0 +1,86 @@
+{% extends 'layouts/default/page.html' %}
+
+{% load bootstrap4 %}
+{% load i18n %}
+
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #555;
+            line-height: 1.6;
+        }
+        ul {
+            color: #555;
+            line-height: 1.6;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to The House Brain!</h1>
+        <p>Thank you for joining us. Below are some steps to help you get started with using our platform:</p>
+        
+        <h2>Getting Started Guide</h2>
+        <ol>
+            <li>Add an Address: Using the "Add Address" tab, save addresses of the properties you would like to track.</li>
+            <li>Add Equipment: Once you have an address, add equipment to track using the "Add Equipment" tab.</li>
+            <li>Add Maintenance Records: Once you have equipment added, you can start tracking maintenance completed for that equipment using the "Add Maintenance" tab.</li>
+            <li>Track and Save Receipts: Receipt images and information from the receipt, to include price and date, can be tracked using the "Add Receipt" tab.</li>
+            <li>Start Being Organized: Begin tracking maintenance and having information available in one convenient place.</li>
+            <li>Reports, Records and Receipts: Will provide useful information about your house!</li>
+        </ol>
+        
+        <h2>Tips for Maintenance Tracking</h2>
+        <p>Here are some tips for effectively tracking maintenance items:</p>
+        <ul>
+            <li>Regular Checkups: Schedule routine inspections to identify potential issues early.</li>
+            <li>Record Details: Keep detailed records of maintenance activities, including dates, costs, and any notes.</li>
+            <li>Check the Dashboard: Use our platform as a reminder for upcoming maintenance tasks.</li>
+            <li>Review Reports: Periodically review reports to assess the overall status of your maintenance efforts.</li>
+        </ul>
+
+        <br>
+        <h2>Common Maintenance Items to Track</h2>
+        <p>Here are some common maintenance items and their recommended frequencies:</p>
+        <ul>
+            <li>Change HVAC Filters: Every 1-3 months, depending on filter type and usage.</li>
+            <li>Change Water Filters: Every 6 months, depending on manufacturer recommendations.</li>
+            <li>Clean Gutters: Twice a year, in spring and fall, or more frequently if necessary.</li>
+            <li>Inspect Roof: Annually, or after severe weather events.</li>
+            <li>Test Smoke Detectors: Monthly, to ensure they are functioning properly.</li>
+            <li>Flush Water Heater: Every 6-12 months, to remove sediment buildup.</li>
+            <li>Check Plumbing for Leaks: Regularly inspect pipes and faucets for leaks.</li>
+            <li>Service Lawn Equipment: Annually, before the start of the mowing season.</li>
+            <li>Inspect Fire Extinguishers: Annually, to verify they are fully charged and functional.</li>
+            <li>Clean Dryer Vents: Annually, to prevent fire hazards.</li>
+            <li>Inspect Electrical Wiring: Every 5-10 years, or if you notice any issues.</li>
+            <li>Clean Fire Place: Annually if used often, to prevent fire hazards.</li>
+        </ul>
+    </div>
+</body>
+</html>
+
+{% endblock %}

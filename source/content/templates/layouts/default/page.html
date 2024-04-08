@@ -80,6 +80,7 @@
         <ul class="navbar-nav mr-auto">
             {% if request.user.is_authenticated %}
             <a class="navbar-brand" href="{% url 'accounts:dashboard' %}">{% trans 'Home' %}</a>
+            
                 {% if request.user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'admin:login' %}">{% trans 'Django administration' %}</a>
@@ -102,6 +103,7 @@
         <ul class="navbar-nav">
             
             {% if request.user.is_authenticated %}
+            <a class="navbar-brand" href="{% url 'accounts:getting_started' %}">{% trans 'Getting Started' %}</a>
             <div class="dropdown">
                 <button class="dropbtn">Profile
                   <i class="fa fa-caret-down"></i>
@@ -124,9 +126,9 @@
 
 
         <nav class="navbar navbar-expand-sm navbar-dark bg-light static-top">
-                <a class="nav-link" href="{% url 'accounts:reports' %}">{% trans 'Report' %}</a>
+                <a class="nav-link" href="{% url 'accounts:reports' %}">{% trans 'Maintenance Report' %}</a>
                 <a class="nav-link" href="{% url 'accounts:equipment' %}">{% trans 'Record' %}</a>
-                <a class="nav-link" href="{% url 'accounts:show_receipt' %}">{% trans 'Receipt' %}</a>
+                <a class="nav-link" href="{% url 'accounts:show_receipt' %}">{% trans 'Receipts' %}</a>
                 <a class="nav-link" href="{% url 'accounts:receipts' %}">{% trans 'Add Receipt' %}</a>
                 <a class="nav-link" href="{% url 'accounts:maintenance' %}">{% trans 'Add Maintenance' %}</a>
                 <a class="nav-link" href="{% url 'accounts:add_equipment' %}">{% trans 'Add Equipment' %}</a>

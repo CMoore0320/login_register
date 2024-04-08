@@ -47,6 +47,7 @@
                 <tr>
                     <th>Address</th>
                     <th>Component</th>
+                    <th>Description</th>
                     <th>Frequency</th>
                     <th>Maintenance Records</th>
                     <th>Delete Component</th>
@@ -57,6 +58,7 @@
                 <tr>
                     <td>{{ item.address }}</td>
                     <td>{{ item.equipment.component }}</td>
+                    <td>{{ item.equipment.description }}</td>
                     <td>{{ item.equipment.frequency }} months</td>
                     <td>
                         <div class="accordion" id="accordion{{ forloop.counter }}">
@@ -97,6 +99,7 @@
             </tbody>
         </table>
     </div>
+<!-- This section obtained from outside sources for formatting and maintaining a clean but functional appearance -->
     <script>
         // jQuery to control accordion behavior
         $(document).ready(function(){

@@ -36,6 +36,10 @@
     {{ form.component }}
     <br>
     <br>
+    {{ form.description.label_tag }}
+    {{ form.description }}
+    <br>
+    <br>
     {{ form.frequency.label_tag }}
     {{ form.frequency }}
     {% if form.frequency.errors %}
@@ -46,6 +50,7 @@
     <br>
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
   </form>
+  <br>
 </div>
 
 
