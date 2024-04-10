@@ -347,7 +347,7 @@ class LogOutView(LoginRequiredMixin, BaseLogoutView):
 ############################# EVERYTHING BELOW IS ADDED FOR MY PROJECT #############################################
 
 
-
+#To save the user inputted Address
 def address_form(request):
     addresses = Address.objects.filter(user=request.user)
     if request.method =='POST':
@@ -364,7 +364,7 @@ def address_form(request):
     return render(request, 'accounts/address_form.html', {'form':form, 'addresses':addresses})
 
  
-
+#To Add Equipment, and generating the logged in users addesses for the user to select
 def AddEquipment(request):
     addresses = Address.objects.filter(user=request.user)
     if request.method =='POST':
@@ -377,7 +377,7 @@ def AddEquipment(request):
             existing_equipment = Equipment.objects.filter(
                 address_id=address_id, component=equipment_instance.component, description=equipment_instance.description
             ).exists()
-
+            # Check for existing equipment, based on address, component, and description
             if existing_equipment:
                 messages.error(request, 'This equipment already exists for this address.')
             else:
@@ -388,7 +388,7 @@ def AddEquipment(request):
         form=EquipmentForm()
     return render(request, 'accounts/add_equipment.html', {'form':form, 'addresses':addresses})
 
-
+#To save user inputted receipts and population user saved addresses
 def receipts(request):
     addresses = Address.objects.filter(user=request.user)
     if request.method == 'POST':
@@ -404,9 +404,9 @@ def receipts(request):
     
     return render(request, 'accounts/receipts.html', {'form': form, 'addresses': addresses})
 
+#To save user inputted maintenance and population user saved addresses
 def maintenance(request):
     user_addresses = Address.objects.filter(user=request.user)
-    #components = Equipment.objects.filter(address__in=user_addresses)
     if request.method == 'POST':
         form = MaintenanceForm(request.POST, user=request.user) 
         if form.is_valid():
@@ -425,10 +425,11 @@ def maintenance(request):
 
     return render(request, 'accounts/maintenance.html', {'form': form,'user_addresses': user_addresses})
 
-
+#to generate data onto records tab
 def equipment(request):
     equipment_instances = Equipment.objects.filter(address__user=request.user)
     
+    # Storing equipment into a list to be displayed
     equipment_list = []
     for equipment_instance in equipment_instances:
         address = equipment_instance.address.address
@@ -442,7 +443,6 @@ def equipment(request):
 def get_components(request):
     address_id = request.GET.get('address')
     components = Equipment.objects.filter(address_id=address_id).values('component')
-    print(components)  # Print components for debugging
     return JsonResponse(list(components), safe=False)
 
 
@@ -452,13 +452,11 @@ def dashboard(request):
     equipments = Equipment.objects.filter(address__user=request.user)
     now = datetime.now().date()
 
-
-
+    #parameters to be displayed on dashboard
     total_properties = user_addresses.values('address').distinct().count()
     total_components = Equipment.objects.filter(address__user=request.user).count()
-    # total_maintenance_tasks = Maintenance.objects.filter(component__address__user=request.user).count()
     total_overdue_tasks= 0
-    # Initialize list to store component details
+
     component_next_maintenance = []
 
     
@@ -466,8 +464,8 @@ def dashboard(request):
         latest_maintenance = Maintenance.objects.filter(component=equipment).order_by('-dateCompleted').first()
         
         if latest_maintenance:
-            # Calculate the next maintenance date based on the frequency
-            next_maintenance_date = latest_maintenance.dateCompleted + timedelta(days=equipment.frequency * 30)  # Assuming frequency is in months
+            # Calculate the next maintenance date based on the frequency (with frequency in months)
+            next_maintenance_date = latest_maintenance.dateCompleted + timedelta(days=equipment.frequency * 30) 
             
             current_date = datetime.now().date()
             if next_maintenance_date < current_date:
@@ -477,9 +475,9 @@ def dashboard(request):
                 status = 'yellow'  # Due within 30 days
             else:
                 status = 'none'  # Not due yet
-            # Check if the next maintenance is less than 2 months away from today
+            # Check if the next maintenance is less than 3 months away from today
             if next_maintenance_date < now + timedelta(days=90):
-                # Store the component and next maintenance date
+                # Store the component and next maintenance date if < 3 months away 
                 component_next_maintenance.append({
                     'component': equipment.component,
                     'description':equipment.description,
@@ -509,7 +507,7 @@ def showReceipt(request):
     low_price = request.GET.get('low_price')
     high_price = request.GET.get('high_price')
 
-    # Construct a filter query based on user inputted parameters
+    # filter query based on parameters
     filter_query = {}
     if address:
         filter_query['address__address__icontains'] = address
@@ -524,12 +522,12 @@ def showReceipt(request):
     if high_price:
         filter_query['price__lte'] = high_price
 
-    
+    #Filtering the receipts based on query. 
     receipts = Receipt.objects.filter(user=request.user, **filter_query)
 
     return render(request, 'accounts/show_receipt.html', {'receipts': receipts, 'addresses': addresses, 'components': components})
 
-
+#Address delete
 def delete(request, address_id):
     try:
         address = Address.objects.get(pk = address_id)
@@ -538,7 +536,7 @@ def delete(request, address_id):
     except Address.DoesNotExist:
         return redirect('accounts:address_form')
     
-
+#Maintenace delete
 def maintenance_delete(request, maintenance):
     try:
         maintenance = Maintenance.objects.get(pk = maintenance)
@@ -547,6 +545,7 @@ def maintenance_delete(request, maintenance):
     except Maintenance.DoesNotExist:
         return redirect('accounts:equipment')
     
+#Component delete
 def component_delete(request, component_id):
     try:
         component = Equipment.objects.get(pk = component_id)
@@ -555,6 +554,7 @@ def component_delete(request, component_id):
     except Equipment.DoesNotExist:
         return redirect('accounts:equipment')
 
+#Receipt delete
 def receipt_delete(request, receipt_id):
     try:
         receipt = Receipt.objects.get(pk = receipt_id)
@@ -585,13 +585,13 @@ def reports(request):
     if high_price:
         filter_query &= Q(maintenance_price__lte=high_price)
     
-    # Fetch all maintenance records
+    # Get all maintenance records
     maintenance_records = Maintenance.objects.filter(filter_query)
 
-    # Dictionary to store the latest maintenance record for each component at each address
+    # Store the latest maintenance record for each component at each address
     latest_maintenance_records = {}
 
-    # Iterate over all maintenance records to find the latest one for each component at each address
+    # Find the last Mainenance record 
     for record in maintenance_records:
         address = record.component.address
         component_name = record.component.component
@@ -608,7 +608,7 @@ def reports(request):
                 'last_maintenance_date': last_maintenance_date
             }
 
-    # Generate component_status_and_price list from latest maintenance records
+    # Generate status & price 
     component_status_and_price = []
     for data in latest_maintenance_records.values():
         record = data['record']

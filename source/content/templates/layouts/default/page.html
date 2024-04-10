@@ -14,7 +14,6 @@
     <meta name="description" content="An example of Django project with basic user functionality.">
     <meta name="author" content="Yehor Smoliakov">
     <link rel="icon" href="{% static 'favicon.ico' %}">
-    <title>Simple Django Login and Registration</title>
     <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <style>
@@ -36,45 +35,41 @@
         .dropdown:hover .dropdown-options {
             display: block;
         }.dropdown {
-    display: inline-block;
-    position: relative;
-    }
+            display: inline-block;
+            position: relative;
+        }
 
-    .dropdown-options {
-        display: none;
-        position: absolute;
-        top: 100%; /* Position dropdown below the button */
-        right: 0; 
-        overflow: auto;
-        background-color: rgb(216, 206, 206); /* Set background color to white */
-        border: 1px solid #4b4848; /* Add a border */
-        min-width: 160px; /* Set a minimum width for the dropdown */
-        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-        z-index: 1;
-    }
+        .dropdown-options {
+            display: none;
+            position: absolute;
+            top: 100%; 
+            right: 0; 
+            overflow: auto;
+            background-color: rgb(216, 206, 206); 
+            border: 1px solid #4b4848; 
+            min-width: 160px; 
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            z-index: 1;
+        }
 
-    .dropdown-options a {
-        display: block;
-        padding: 10px; /* Add padding to improve readability */
-        color: black; /* Set text color to black */
-        text-decoration: none; /* Remove underline */
-    }
+        .dropdown-options a {
+            display: block;
+            padding: 10px; 
+            color: black; 
+            text-decoration: none;
+        }
 
-    .dropdown-options a:hover {
-        background-color: #f0f0f0; /* Change background color on hover */
-    }
+        .dropdown-options a:hover {
+            background-color: #f0f0f0; 
+        }
     </style>
     
 </head>
-
 
 <body class="bg-secondary">
     
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark static-top" >
-<!-- Changed index to dashboard right here -->
-    <!-- <a class="navbar-brand" href="{% url 'index' %}">{% trans 'Home' %}</a> -->
-
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
@@ -120,10 +115,8 @@
             {% endif %}
         </ul>
     </div>
-
 </nav>
 {% if request.user.is_authenticated %}
-
 
         <nav class="navbar navbar-expand-sm navbar-dark bg-light static-top">
                 <a class="nav-link" href="{% url 'accounts:reports' %}">{% trans 'Maintenance Report' %}</a>
@@ -137,8 +130,6 @@
             </div>
         </nav>
 
-        
-
  {% endif %}
 
 <div class="container-fluid mt-3">
@@ -150,7 +141,6 @@
     {% endblock %}
 
 </div>
-
 
 <script src="{% static 'vendor/jquery/jquery-3.4.1.min.js' %}"></script>
 <script src="{% static 'vendor/popper/popper.min.js' %}"></script>

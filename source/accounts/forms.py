@@ -230,10 +230,9 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['address']
-
+        
     def clean_address(self):
         address = self.cleaned_data['address']
-        
 
         if Address.objects.filter( address=address).exists():
             raise ValidationError(_('You cannot use this address as it already exists.'))
@@ -259,17 +258,18 @@ class MaintenanceForm(forms.ModelForm):
         model = Maintenance
         fields = ['component', 'dateCompleted', 'maintenance_price', 'notes']
         widgets = {
-            'notes': forms.Textarea(attrs={'rows': 4}),  # Set the number of rows as needed
+            'notes': forms.Textarea(attrs={'rows': 4}),  
         }
     
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # Retrieve user from kwargs
+         # Retrieve user 
+        user = kwargs.pop('user', None)  
         super(MaintenanceForm, self).__init__(*args, **kwargs)
         if user:
             user_addresses = Address.objects.filter(user=user)
             self.fields['component'].queryset = Equipment.objects.filter(address__in=user_addresses)
         
-        self.fields['component'].label_from_instance = lambda obj: f"{obj.address} - {obj.component}"
+        self.fields['component'].label_from_instance = lambda obj: f"{obj.address} - {obj.component} - {obj.description}"
 
   
 class ReceiptForm(forms.ModelForm):
